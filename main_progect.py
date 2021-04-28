@@ -1,13 +1,14 @@
 import datetime
 import os
 
-from flask_login import login_user, LoginManager, login_required, logout_user
+from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 
 from data import db_session
 from flask import Flask, render_template, request, make_response, session, jsonify
 from flask_restful import Api
 from werkzeug.utils import redirect
 
+from data.client import Client
 from data.staff import Staff
 from forms.loginform import LoginForm
 from forms.registerform import RegisterForm
@@ -21,7 +22,9 @@ login_manager.init_app(app)
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html', title='Главная страница')
+    db_sess = db_session.create_session()
+    data = db_sess.query(Client)
+    return render_template('index.html', title='Главная страница', data=data)
 
 
 @app.route('/login', methods=['GET', 'POST'])
